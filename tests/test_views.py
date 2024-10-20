@@ -28,8 +28,10 @@ class ManufacturerTestView(TestCase):
 
 class DriverTestView(TestCase):
     def setUp(self):
+        self.password = "testpassword"
         self.user = get_user_model().objects.create_user(
-            username="testuser", password="<PASSWORD>"
+            username="testuser",
+            password=self.password
         )
         Driver.objects.create(
             username="alex_1993",
@@ -40,8 +42,7 @@ class DriverTestView(TestCase):
         )
 
     def test_driver_authenticated_user(self):
-        self.client.login(username="testuser",
-                          password="<PASSWORD>")
+        self.client.login(username="testuser", password=self.password)
         response = self.client.get(reverse("taxi:driver-list"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response,

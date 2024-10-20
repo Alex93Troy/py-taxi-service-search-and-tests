@@ -73,8 +73,7 @@ class CarFormTest(TestCase):
 class ManufacturerSearchFormTest(TestCase):
     def test_manufacturer_search_form_valid(self):
         form_data = {
-            "model": "Corolla",
-            "manufacturer": "Toyota",
+            "name": "Toyota",  # Assuming 'name' is the correct field in your form
         }
         form = ManufacturerSearchForm(data=form_data)
         self.assertTrue(form.is_valid(), msg=f"Form errors: {form.errors}")
@@ -82,4 +81,4 @@ class ManufacturerSearchFormTest(TestCase):
     def test_manufacturer_search_form_invalid(self):
         form_data = {}
         form = ManufacturerSearchForm(data=form_data)
-        self.assertTrue(form.is_valid())
+        self.assertFalse(form.is_valid(), msg=f"Form errors: {form.errors}")

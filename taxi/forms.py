@@ -3,7 +3,23 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from taxi.models import Car, Driver
+from taxi.models import Car, Driver, Manufacturer
+
+def validate_license_number(
+    license_number,
+):  # regex validation is also possible here
+    if len(license_number) != 8:
+        raise ValidationError(
+            "License number should consist of 8 characters")
+    elif (not license_number[:3].isupper()
+          or not license_number[:3].isalpha()):
+        raise ValidationError(
+            "First 3 characters should be uppercase letters")
+    elif not license_number[3:].isdigit():
+        raise ValidationError(
+            "Last 5 characters should be digits")
+
+    return license_number
 
 
 class CarForm(forms.ModelForm):
@@ -41,21 +57,7 @@ class DriverLicenseUpdateForm(forms.ModelForm):
             self.cleaned_data["license_number"])
 
 
-def validate_license_number(
-    license_number,
-):  # regex validation is also possible here
-    if len(license_number) != 8:
-        raise ValidationError(
-            "License number should consist of 8 characters")
-    elif (not license_number[:3].isupper()
-          or not license_number[:3].isalpha()):
-        raise ValidationError(
-            "First 3 characters should be uppercase letters")
-    elif not license_number[3:].isdigit():
-        raise ValidationError(
-            "Last 5 characters should be digits")
 
-    return license_number
 
 
 class DriverSearchForm(forms.Form):
@@ -74,6 +76,12 @@ class CarSearchForm(forms.Form):
 
 class ManufacturerSearchForm(forms.Form):
     name = forms.CharField(
-        max_length=55, required=False,
+        max_length=55, required=True,
         label="", widget=forms.TextInput(attrs={
             "placeholder": "Search by name"}))
+
+
+class ManuFacturerForm(forms.ModelForm):
+    class Meta:
+        model = Manufacturer
+        fields = ['name', 'country']

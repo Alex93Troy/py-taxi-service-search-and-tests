@@ -13,6 +13,7 @@ from taxi.forms import (
     DriverSearchForm,
     CarSearchForm,
     ManufacturerSearchForm,
+    ManuFacturerForm
 )
 
 
@@ -60,17 +61,18 @@ class ManufacturerListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
-class ManufacturerCreateView(LoginRequiredMixin,
-                             generic.CreateView):
+class ManufacturerCreateView(LoginRequiredMixin, generic.CreateView):
     model = Manufacturer
-    fields = "__all__"
+    form_class = ManuFacturerForm
+    template_name = "taxi/manufacturer_form.html"
     success_url = reverse_lazy("taxi:manufacturer-list")
 
 
 class ManufacturerUpdateView(LoginRequiredMixin,
                              generic.UpdateView):
     model = Manufacturer
-    fields = "__all__"
+    form_class = ManuFacturerForm
+    template_name = "taxi/manufacturer_form.html"
     success_url = reverse_lazy("taxi:manufacturer-list")
 
 
@@ -162,14 +164,16 @@ class DriverDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Driver
     success_url = reverse_lazy("")
 
-
-@login_required
+@login_required()
 def toggle_assign_to_car(request, pk):
     driver = Driver.objects.get(id=request.user.id)
-    if (
-            Car.objects.get(id=pk) in driver.cars.all()
-    ):  # probably could check if car exists
-        driver.cars.remove(pk)
+
+    car = get_object_or_404(Car, id=pk)
+
+    if car in driver.cars.all():
+        driver.cars.remove(car)
     else:
-        driver.cars.add(pk)
-    return HttpResponseRedirect(reverse_lazy("taxi:car-detail", args=[pk]))
+        driver.cars.add(car)
+
+
+    return HttpResponseRedirect(reverse('taxi:car-list'))

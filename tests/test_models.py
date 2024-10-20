@@ -66,7 +66,7 @@ class TestCarModel(TestCase):
 class TestManufacturerModel(TestCase):
     def setUp(self):
         self.manufacturer = Manufacturer.objects.create(
-            name="KIA", country="Korea")
+            name="KIA")
 
     def test_manufacturer_str_method(self):
         self.assertEqual("KIA", self.manufacturer.name)
